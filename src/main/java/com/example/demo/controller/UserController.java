@@ -1,13 +1,16 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import com.example.demo.response.ApiResponse;
 @CrossOrigin(origins = "*")
 @RestController
 public class UserController {
@@ -15,34 +18,65 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    // CREATE
+    // CREATE USER
     @PostMapping("/add")
-    public User addUser(@RequestBody User user){
-        return service.saveUser(user);
-    }
+    public ApiResponse addUser(@Valid @RequestBody UserDTO dto){
 
-    // READ
+        service.saveUser(dto);
+
+        return new ApiResponse(
+
+                true,
+                "User Added Successfully"
+
+        );
+
+    }
+    // GET ALL USERS
     @GetMapping("/all")
     public List<User> getAll(){
+
         return service.getAllUsers();
+
     }
 
-    // UPDATE
-    @PostMapping("/update")
-    public User updateUser(@RequestBody User user){
-        return service.saveUser(user);
+    // UPDATE USER
+    @PutMapping("/update/{id}")
+    public ApiResponse updateUser(
+
+            @PathVariable Long id,
+
+            @Valid @RequestBody UserDTO dto
+
+    ){
+
+        service.updateUser(id, dto);
+
+        return new ApiResponse(
+
+                true,
+                "User Updated Successfully"
+
+        );
+
     }
 
-    // DELETE
-    @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id){
+    // DELETE USER
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteUser(@PathVariable Long id){
 
         service.deleteUser(id);
 
-        return "Deleted";
+        return new ApiResponse(
+
+                true,
+                "User Deleted Successfully"
+
+        );
+
     }
 
-    // SEARCH
+    // SEARCH USER
     @GetMapping("/search/{text}")
     public List<User> searchUser(@PathVariable String text){
 
