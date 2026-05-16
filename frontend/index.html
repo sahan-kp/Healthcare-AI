@@ -1,265 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>HealthCare AI | Advanced Diagnostics</title>
-    <!-- Bootstrap 5 CSS -->
+
+    <!-- Bootstrap -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        /* --- 1. MODERN NEON LOADER STYLES --- */
-        #loader {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            background: #0f172a; /* Dark sleek background */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
 
-        .pulse-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    <!-- CSS FILE -->
 
-        .pulse-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #00d2ff;
-            box-shadow: 0 0 20px #00d2ff, 0 0 60px #3a7bd5;
-            animation: pulse 1.5s infinite;
-        }
+    <link rel="stylesheet" href="style.css">
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(0, 210, 255, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
-        }
-
-        .loader-text {
-            margin-top: 30px;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 300;
-            color: #ffffff;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px #00d2ff;
-        }
-
-        /* --- 2. MAIN CONTENT STYLES --- */
-        #main-content {
-            display: none;
-            background-color: #f1f5f9;
-            min-height: 100vh;
-        }
-
-        .main-card { 
-            border-radius: 20px; 
-            border: none; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); 
-            background: white;
-        }
-
-        .section-title {
-            border-left: 5px solid #3a7bd5;
-            padding-left: 15px;
-            margin: 25px 0 15px 0;
-            color: #1e293b;
-            font-weight: bold;
-        }
-
-        .btn-predict {
-            background: linear-gradient(45deg, #3a7bd5, #00d2ff);
-            border: none;
-            color: white;
-            font-weight: bold;
-            padding: 14px;
-            transition: 0.4s;
-            border-radius: 12px;
-        }
-
-        .btn-predict:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 20px rgba(58, 123, 213, 0.3);
-            color: white;
-        }
-
-        .user-card {
-            background: white;
-            border-radius: 15px;
-            padding: 18px;
-            margin-bottom: 15px;
-            border-right: 5px solid #3a7bd5;
-            transition: 0.3s;
-        }
-
-        .user-card:hover { transform: translateX(-5px); }
-
-        .navbar { background: #1e293b; }
-    </style>
 </head>
+
 <body>
 
-    <!-- MODERN NEON LOADER -->
-    <div id="loader">
-        <div class="pulse-container">
-            <div class="pulse-circle"></div>
-            <span style="position:absolute; font-size: 30px;">⚕️</span>
-        </div>
-        <div class="loader-text">AI DIAGNOSING...</div>
+<!-- LOADER -->
+
+<div id="loader">
+
+    <div class="pulse-container">
+        <div class="pulse-circle"></div>
+        <span style="position:absolute; font-size:30px;">⚕️</span>
     </div>
 
-    <!-- MAIN APP CONTENT -->
-    <div id="main-content">
-        <nav class="navbar navbar-dark shadow-sm">
-            <div class="container">
-                <span class="navbar-brand mb-0 h1 fw-bold">🛡️ HEALTHCARE AI <span class="fw-light small">v2.0</span></span>
-            </div>
-        </nav>
-
-        <div class="container py-5">
-            <div class="row g-4">
-                <!-- Left Side: Form -->
-                <div class="col-lg-7">
-                    <div class="card main-card p-4">
-                        <h3 class="mb-4 text-center fw-bold text-dark">Patient Assessment Form</h3>
-                        
-                        <div class="row g-3">
-                            <h6 class="section-title">Personal Details</h6>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Full Name</label>
-                                <input type="text" id="name" class="form-control" placeholder="John Doe">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">Age</label>
-                                <input type="number" id="age" class="form-control" placeholder="25">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">BPM</label>
-                                <input type="number" id="heartRate" class="form-control" placeholder="72">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Email Address</label>
-                                <input type="email" id="email" class="form-control" placeholder="patient@example.com">
-                            </div>
-
-                            <h6 class="section-title">Clinical Vitals</h6>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Blood Pressure (mmHg)</label>
-                                <input type="text" id="bp" class="form-control" placeholder="120/80">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Sugar Level (mg/dL)</label>
-                                <input type="text" id="sugar" class="form-control" placeholder="90">
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Describe Symptoms</label>
-                                <textarea id="symptoms" class="form-control" rows="4" placeholder="Pain, dizziness, fever..."></textarea>
-                            </div>
-
-                            <div class="col-12 mt-4">
-                                <button onclick="addUser()" class="btn btn-predict w-100 shadow-lg">ANALYZE & SAVE RECORD</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Side: Recent Users -->
-                <div class="col-lg-5">
-                    <div class="card main-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="m-0 fw-bold">Recent History</h5>
-                            <button onclick="loadUsers()" class="btn btn-sm btn-light">🔄</button>
-                        </div>
-                        <div id="userList">
-                            <!-- User records will load here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="loader-text">
+        AI DIAGNOSING...
     </div>
 
-    <script>
-        // 1. Loader Logic (Set to 10 Seconds)
-        window.onload = function() {
-            setTimeout(function() {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    loadUsers(); 
-                }, 500);
-            }, 10000); // 10000ms = 10 Seconds
-        };
+</div>
 
-        // 2. Add User Function (Kalin fields okkoma ekkala)
-        function addUser() {
-            const userData = {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                age: document.getElementById("age").value,
-                heartRate: document.getElementById("heartRate").value,
-                bp: document.getElementById("bp").value,
-                sugar: document.getElementById("sugar").value,
-                symptoms: document.getElementById("symptoms").value
-            };
+<!-- MAIN CONTENT -->
 
-            if(!userData.name || !userData.email) {
-                alert("Please fill name and email!");
-                return;
-            }
+<div id="main-content">
 
-            fetch("http://localhost:8080/add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userData)
-            })
-            .then(res => {
-                if(res.ok) {
-                    alert("✅ User Added Successfully!");
-                    clearForm();
-                    loadUsers();
-                }
-            })
-            .catch(err => alert("Backend Error: Check if server is running on 8080"));
-        }
+    <nav class="navbar navbar-dark shadow-sm">
 
-        // 3. Load Function
-        function loadUsers() {
-            fetch("http://localhost:8080/all")
-            .then(res => res.json())
-            .then(data => {
-                const list = document.getElementById("userList");
-                list.innerHTML = "";
-                data.reverse().forEach(user => {
-                    const div = document.createElement("div");
-                    div.className = "user-card shadow-sm";
-                    div.innerHTML = `
-                        <div class="d-flex justify-content-between">
-                            <strong class="text-primary">${user.name}</strong>
-                            <span class="badge bg-light text-dark">${user.age} Yrs</span>
+        <div class="container">
+
+            <span class="navbar-brand mb-0 h1 fw-bold">
+                🛡️ HEALTHCARE AI
+            </span>
+
+        </div>
+
+    </nav>
+
+    <div class="container py-5">
+
+        <!-- AI RESULT -->
+
+        <div id="ai-result-box" class="alert alert-info shadow-sm"></div>
+
+        <!-- SEARCH -->
+
+        <div class="mb-4">
+
+            <input type="text"
+                   id="searchText"
+                   class="form-control"
+                   placeholder="Search by Name or Email"
+                   onkeyup="searchUser()">
+
+        </div>
+
+        <div class="row g-4">
+
+            <!-- FORM -->
+
+            <div class="col-lg-7">
+
+                <div class="card main-card p-4">
+
+                    <h3 class="mb-4 text-center fw-bold">
+                        Patient Assessment Form
+                    </h3>
+
+                    <div class="row g-3">
+
+                        <h6 class="section-title">
+                            Personal Details
+                        </h6>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Full Name
+                            </label>
+
+                            <input type="text"
+                                   id="name"
+                                   class="form-control">
+
                         </div>
-                        <div class="small mt-2">
-                            <b>BP:</b> ${user.bp} | <b>Sugar:</b> ${user.sugar} | <b>BPM:</b> ${user.heartRate || 'N/A'}<br>
-                            <span class="text-muted italic">${user.symptoms}</span>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                });
-            });
-        }
 
-        function clearForm() {
-            document.querySelectorAll('input, textarea').forEach(i => i.value = "");
-        }
-    </script>
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Email
+                            </label>
+
+                            <input type="email"
+                                   id="email"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Age
+                            </label>
+
+                            <input type="number"
+                                   id="age"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                BPM
+                            </label>
+
+                            <input type="number"
+                                   id="heartRate"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                BMI
+                            </label>
+
+                            <input type="text"
+                                   id="bmi"
+                                   class="form-control">
+
+                        </div>
+
+                        <h6 class="section-title">
+                            Clinical Vitals
+                        </h6>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Blood Pressure
+                            </label>
+
+                            <input type="text"
+                                   id="bp"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Sugar
+                            </label>
+
+                            <input type="text"
+                                   id="sugar"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <label class="form-label fw-semibold">
+                                Symptoms
+                            </label>
+
+                            <textarea id="symptoms"
+                                      rows="4"
+                                      class="form-control"></textarea>
+
+                        </div>
+
+                        <div class="col-12 mt-4">
+
+                            <button onclick="processHealthCheck()"
+                                    class="btn btn-predict w-100">
+
+                                ANALYZE & SAVE RECORD
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- HISTORY -->
+
+            <div class="col-lg-5">
+
+                <div class="card main-card p-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <h5 class="m-0 fw-bold">
+                            Recent History
+                        </h5>
+
+                        <button onclick="loadUsers()"
+                                class="btn btn-sm btn-light">
+
+                            🔄
+
+                        </button>
+
+                    </div>
+
+                    <div id="userList"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JS FILE -->
+
+<script src="script.js"></script>
+
 </body>
+
 </html>

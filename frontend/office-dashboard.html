@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>HealthCare AI | Advanced Diagnostics</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+
+<style>
+
+body{
+    background:#0f172a;
+    color:white;
+    font-family:Segoe UI;
+}
+
+.card-box{
+
+    max-width:700px;
+    margin:auto;
+
+    margin-top:50px;
+
+    background:rgba(255,255,255,0.08);
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 0 25px rgba(0,210,255,0.2);
+}
+
+.btn-save{
+
+    background:linear-gradient(45deg,#3a7bd5,#00d2ff);
+
+    border:none;
+
+    color:white;
+
+    font-weight:bold;
+
+    height:50px;
+}
+
+.btn-history{
+
+    background:#1e293b;
+
+    color:white;
+
+    border:none;
+
+    height:50px;
+
+    font-weight:bold;
+}
+
+.btn-delete{
+
+    background:red;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:10px;
+
+    font-weight:bold;
+}
+
+.form-control,
+.form-select{
+
+    height:50px;
+
+    border-radius:12px;
+}
+
+.alert-box{
+
+    display:none;
+
+    text-align:center;
+
+    font-weight:bold;
+}
+
+.user-card{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    color:black;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.history-popup{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100vh;
+
+    background:rgba(0,0,0,0.7);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+}
+
+.history-box{
+
+    width:700px;
+
+    max-height:80vh;
+
+    overflow-y:auto;
+
+    background:#1e293b;
+
+    padding:25px;
+
+    border-radius:20px;
+}
+
+.close-btn{
+
+    background:red;
+
+    border:none;
+
+    color:white;
+
+    padding:10px 20px;
+
+    border-radius:10px;
+
+    margin-bottom:20px;
+}
+
+.filter-box{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.search-input{
+
+    flex:1;
+}
+
+.check-box{
+
+    width:20px;
+    height:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card-box">
+
+<h2 class="mb-4 text-center">
+🏢 Office User Management
+</h2>
+
+<!-- ALERT -->
+
+<div id="alertBox"
+     class="alert alert-success alert-box">
+
+    ✅ User Saved Successfully
+
+</div>
+
+<!-- USERNAME -->
+
+<div class="mb-3">
+
+<label class="mb-2">
+Username
+</label>
+
+<input type="text"
+       id="username"
+       class="form-control"
+       placeholder="Enter Username">
+
+</div>
+
+<!-- PASSWORD -->
+
+<div class="mb-3">
+
+<label class="mb-2">
+Password
+</label>
+
+<input type="password"
+       id="password"
+       class="form-control"
+       placeholder="Enter Password">
+
+</div>
+
+<!-- ROLE -->
+
+<div class="mb-3">
+
+<label class="mb-2">
+Role
+</label>
+
+<select id="role"
+        class="form-select">
+
+<option value="">
+Select Role
+</option>
+
+<option value="DOCTOR">
+Doctor
+</option>
+
+<option value="COUNTER">
+Counter
+</option>
+
+</select>
+
+</div>
+
+<!-- BUTTONS -->
+
+<div class="row">
+
+<div class="col-md-6 mb-2">
+
+<button onclick="saveUser()"
+        class="btn btn-save w-100">
+
+CREATE USER
+
+</button>
+
+</div>
+
+<div class="col-md-6 mb-2">
+
+<button onclick="openHistory()"
+        class="btn btn-history w-100">
+
+VIEW USERS HISTORY
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- HISTORY POPUP -->
+
+<div class="history-popup"
+     id="historyPopup">
+
+<div class="history-box">
+
+<button class="close-btn"
+        onclick="closeHistory()">
+
+CLOSE
+
+</button>
+
+<h3 class="mb-4">
+👥 Users History
+</h3>
+
+<!-- SEARCH + FILTER -->
+
+<div class="filter-box">
+
+<input type="text"
+       id="searchInput"
+       class="form-control search-input"
+       placeholder="Search Username..."
+       onkeyup="filterUsers()">
+
+<select id="filterRole"
+        class="form-select"
+        onchange="filterUsers()">
+
+<option value="ALL">
+All
+</option>
+
+<option value="DOCTOR">
+Doctor
+</option>
+
+<option value="COUNTER">
+Counter
+</option>
+
+</select>
+
+</div>
+
+<!-- DELETE BUTTON -->
+
+<button onclick="deleteSelectedUsers()"
+        class="btn-delete mb-3">
+
+🗑 DELETE SELECTED USERS
+
+</button>
+
+<!-- USER LIST -->
+
+<div id="userList"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let allUsers = [];
+
+
+// SAVE USER
+
+function saveUser(){
+
+    let username =
+        document.getElementById("username").value;
+
+    let password =
+        document.getElementById("password").value;
+
+    let role =
+        document.getElementById("role").value;
+
+    if(username === "" ||
+       password === "" ||
+       role === ""){
+
+        alert("Please fill all fields");
+
+        return;
+    }
+
+    let userData = {
+
+        username: username,
+        password: password,
+        role: role
+
+    };
+
+    fetch(
+
+        "http://localhost:8080/auth/create-user",
+
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify(userData)
+
+        }
+
+    )
+
+    .then(async res => {
+
+        let data = await res.text();
+
+        if(res.ok){
+
+            let alertBox =
+                document.getElementById("alertBox");
+
+            alertBox.style.display = "block";
+
+            alertBox.innerHTML =
+                "✅ User Saved Successfully";
+
+            clearForm();
+
+            loadUsers();
+
+            setTimeout(()=>{
+
+                alertBox.style.display = "none";
+
+            },3000);
+
+        }
+
+        else{
+
+            alert(data);
+
+        }
+
+    })
+
+    .catch(error=>{
+
+        console.log(error);
+
+        alert("Server Error");
+
+    });
+
+}
+
+
+// LOAD USERS
+
+function loadUsers(){
+
+    fetch(
+        "http://localhost:8080/auth/login-users"
+    )
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        allUsers = data;
+
+        showUsers(data);
+
+    });
+
+}
+
+
+// SHOW USERS
+
+function showUsers(data){
+
+    let list =
+        document.getElementById("userList");
+
+    list.innerHTML = "";
+
+    if(data.length === 0){
+
+        list.innerHTML =
+            "<p class='text-white'>No Users Found</p>";
+
+        return;
+    }
+
+    data.forEach(user=>{
+
+        list.innerHTML += `
+
+        <div class="user-card">
+
+            <div>
+
+                <input type="checkbox"
+                       class="check-box user-check"
+                       value="${user.id}">
+
+            </div>
+
+            <div style="flex:1; margin-left:15px;">
+
+                <h5>
+                    👤 ${user.username}
+                </h5>
+
+                <b>Role :</b>
+                ${user.role}
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+// OPEN HISTORY
+
+function openHistory(){
+
+    document.getElementById("historyPopup")
+        .style.display = "flex";
+
+    loadUsers();
+
+}
+
+
+// CLOSE HISTORY
+
+function closeHistory(){
+
+    document.getElementById("historyPopup")
+        .style.display = "none";
+
+}
+
+
+// FILTER USERS
+
+function filterUsers(){
+
+    let searchText =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    let role =
+        document.getElementById("filterRole")
+        .value;
+
+    let filteredUsers =
+        allUsers.filter(user=>{
+
+        let matchName =
+            user.username
+            .toLowerCase()
+            .includes(searchText);
+
+        let matchRole =
+            role === "ALL" ||
+            user.role === role;
+
+        return matchName && matchRole;
+
+    });
+
+    showUsers(filteredUsers);
+
+}
+
+
+// DELETE USERS
+
+function deleteSelectedUsers(){
+
+    let checkedBoxes =
+        document.querySelectorAll(".user-check:checked");
+
+    if(checkedBoxes.length === 0){
+
+        alert("Select users first");
+
+        return;
+    }
+
+    if(!confirm("Delete selected users?")){
+
+        return;
+    }
+
+    checkedBoxes.forEach(box=>{
+
+        let userId = box.value;
+
+        fetch(
+
+            `http://localhost:8080/auth/delete-user/${userId}`,
+
+            {
+
+                method:"DELETE"
+
+            }
+
+        )
+
+        .then(res=>{
+
+            if(res.ok){
+
+                loadUsers();
+
+            }
+
+        });
+
+    });
+
+}
+
+
+// CLEAR FORM
+
+function clearForm(){
+
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("role").value = "";
+
+}
+
+</script>
+
+</body>
+</html>

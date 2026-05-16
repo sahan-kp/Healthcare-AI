@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>HealthCare AI | Advanced Diagnostics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#0f172a;
+            font-family:Segoe UI;
+            color:white;
+        }
+
+        .main-card{
+
+            max-width:900px;
+
+            margin:auto;
+
+            margin-top:40px;
+
+            background:rgba(255,255,255,0.08);
+
+            border-radius:25px;
+
+            padding:30px;
+
+            box-shadow:0 0 25px rgba(0,210,255,0.2);
+        }
+
+        .title{
+
+            text-align:center;
+
+            margin-bottom:30px;
+
+            font-weight:bold;
+        }
+
+        .form-control{
+
+            height:50px;
+
+            border-radius:12px;
+        }
+
+        textarea.form-control{
+
+            height:120px;
+        }
+
+        .btn-save{
+
+            height:50px;
+
+            border:none;
+
+            border-radius:12px;
+
+            background:linear-gradient(45deg,#3a7bd5,#00d2ff);
+
+            color:white;
+
+            font-size:18px;
+
+            font-weight:bold;
+        }
+
+        .user-card{
+
+            background:white;
+
+            color:black;
+
+            border-radius:15px;
+
+            padding:15px;
+
+            margin-top:15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="main-card">
+
+        <h2 class="title">
+            🧾 Counter Patient Registration
+        </h2>
+
+        <!-- ALERT -->
+
+        <div id="alertBox"
+             class="alert alert-success"
+             style="display:none;">
+
+            Patient Saved Successfully
+
+        </div>
+
+        <div class="row">
+
+            <!-- LEFT -->
+
+            <div class="col-lg-6">
+
+                <div class="mb-3">
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <input type="text"
+                           id="name"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input type="email"
+                           id="email"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+                        Age
+                    </label>
+
+                    <input type="number"
+                           id="age"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+                        BPM
+                    </label>
+
+                    <input type="number"
+                           id="heartRate"
+                           class="form-control">
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+
+            <div class="col-lg-6">
+
+                <div class="mb-3">
+
+                    <label>
+                        Blood Pressure
+                    </label>
+
+                    <input type="text"
+                           id="bp"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+                        Sugar
+                    </label>
+
+                    <input type="text"
+                           id="sugar"
+                           class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label>
+                        Symptoms
+                    </label>
+
+                    <textarea id="symptoms"
+                              class="form-control"></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <button onclick="savePatient()"
+                class="btn-save w-100 mt-3">
+
+            SAVE PATIENT
+
+        </button>
+
+        <hr class="mt-5">
+
+        <!-- HISTORY -->
+
+        <h4>
+            Recent Patients
+        </h4>
+
+        <div id="userList"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+loadUsers();
+
+function savePatient(){
+
+    let userData = {
+
+        name:
+            document.getElementById("name").value,
+
+        email:
+            document.getElementById("email").value,
+
+        age:
+            document.getElementById("age").value,
+
+        heartRate:
+            document.getElementById("heartRate").value,
+
+        bp:
+            document.getElementById("bp").value,
+
+        sugar:
+            document.getElementById("sugar").value,
+
+        symptoms:
+            document.getElementById("symptoms").value
+
+    };
+
+    // VALIDATION
+
+    if(userData.name === "" ||
+       userData.email === ""){
+
+        alert("Please Fill Required Fields");
+
+        return;
+    }
+
+    // SAVE TO BACKEND
+
+    fetch(
+
+        "http://localhost:8080/users/add",
+
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify(userData)
+
+        }
+
+    )
+
+    .then(async res => {
+
+        if(res.ok){
+
+            // SUCCESS ALERT
+
+            let alertBox =
+                document.getElementById("alertBox");
+
+            alertBox.style.display = "block";
+
+            // CLEAR FORM
+
+            clearForm();
+
+            // RELOAD USERS
+
+            loadUsers();
+
+            setTimeout(()=>{
+
+                alertBox.style.display = "none";
+
+            },3000);
+
+        }
+
+        else{
+
+            alert("Save Failed");
+
+        }
+
+    })
+
+    .catch(error=>{
+
+        console.log(error);
+
+        alert("Server Error");
+
+    });
+
+}
+
+// LOAD USERS
+
+function loadUsers(){
+
+    fetch(
+        "http://localhost:8080/users/all"
+    )
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        let list =
+            document.getElementById("userList");
+
+        list.innerHTML = "";
+
+        data.reverse().slice(0,5).forEach(user=>{
+
+            list.innerHTML += `
+
+            <div class="user-card">
+
+                <h5>
+                    👤 ${user.name}
+                </h5>
+
+                <b>Email :</b>
+                ${user.email}
+
+                <br>
+
+                <b>Age :</b>
+                ${user.age}
+
+                <br>
+
+                <b>BP :</b>
+                ${user.bp}
+
+                <br>
+
+                <b>Sugar :</b>
+                ${user.sugar}
+
+            </div>
+
+            `;
+
+        });
+
+    });
+
+}
+
+// CLEAR FORM
+
+function clearForm(){
+
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("age").value = "";
+    document.getElementById("heartRate").value = "";
+    document.getElementById("bp").value = "";
+    document.getElementById("sugar").value = "";
+    document.getElementById("symptoms").value = "";
+
+}
+
+</script>
+
+</body>
+</html>
